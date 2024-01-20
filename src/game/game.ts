@@ -1,9 +1,9 @@
 import {
   addComponent,
   addEntity,
-  createWorld,
+  createWorld, getAllEntities,
   IWorld,
-  pipe,
+  pipe, removeEntity,
 } from 'bitecs';
 import { randomInt } from "@/app/utils";
 import {
@@ -29,33 +29,52 @@ export default class Game {
   private isRunning = false;
   private delta = 0;
   private isAwaitedAnimationFrame = false;
-
   private world: IWorld;
   private fixedPipeline;
   private renderPipeline;
+
   constructor(context: CanvasRenderingContext2D) {
     this.isRunning = false;
     this.world = createWorld();
     this.fixedPipeline = pipe(boundarySystem, movementSystem);
     this.renderPipeline = pipe((world: IWorld) => renderSystem(context, world, this.delta));
-    this.initEntities();
+    this.initEntities(1000);
   }
 
-  initEntities() {
-    const count = 10000;
+  initEntities(count: number) {
     for(let i = 0; i < count; i++) {
-      const id = addEntity(this.world);
-      addComponent(this.world, PositionComponent, id);
-      addComponent(this.world, VelocityComponent, id);
-      addComponent(this.world, ColorComponent, id);
-      addComponent(this.world, SizeComponent, id);
-      VelocityComponent.x[id] = randomInt(-100, 100);
-      VelocityComponent.y[id] = randomInt(-100, 100);
-      PositionComponent.x[id] = randomInt(0, 500);
-      PositionComponent.y[id] = randomInt(0, 500);
-      SizeComponent.height[id] = 20;
-      SizeComponent.width[id] = 20;
-      ColorComponent.colorIndex[id] = randomInt(0, 6);
+      this.initEntity(
+        {x: randomInt(0, 500), y: randomInt(0, 500)},
+        {x: randomInt(-100, 100), y: randomInt(-100, 100)},
+        {width: randomInt(5, 30), height: randomInt(5, 30)},
+        randomInt(0, 6)
+      );
+    }
+  }
+
+  initEntity(
+    position: {x: number, y: number},
+    velocity: {x: number, y: number},
+    size: {width: number, height: number},
+    color: number
+    ) {
+    const id = addEntity(this.world);
+    addComponent(this.world, PositionComponent, id);
+    addComponent(this.world, VelocityComponent, id);
+    addComponent(this.world, ColorComponent, id);
+    addComponent(this.world, SizeComponent, id);
+    VelocityComponent.x[id] = velocity.x;
+    VelocityComponent.y[id] = velocity.y;
+    PositionComponent.x[id] = position.x;
+    PositionComponent.y[id] = position.y;
+    SizeComponent.height[id] = size.height;
+    SizeComponent.width[id] = size.width;
+    ColorComponent.colorIndex[id] = color;
+  }
+
+  removeAllEntity() {
+    for (const id of getAllEntities(this.world)) {
+      removeEntity(this.world, id);
     }
   }
 

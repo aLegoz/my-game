@@ -12,10 +12,15 @@ export default function renderSystem(
   const entities = renderQuery(world);
   drawContext.clearRect(0, 0, 500, 500);
   for (const id of entities) {
+    const deltaX = Math.round(SizeComponent.width[id] / 2);
+    const deltaY = Math.round(SizeComponent.height[id] / 2);
+    const posX = PositionComponent.x[id] - deltaX;
+    const posY = PositionComponent.y[id] - deltaY;
+
     drawContext.fillStyle = IndexedColors[ColorComponent.colorIndex[id]];
     drawContext.fillRect(
-      lerp(PositionComponent.x[id], PositionComponent.x[id] + VelocityComponent.x[id], delta),
-      lerp(PositionComponent.y[id], PositionComponent.y[id] + VelocityComponent.y[id], delta),
+      lerp(posX, posX + VelocityComponent.x[id], delta),
+      lerp(posY, posY + VelocityComponent.y[id], delta),
       SizeComponent.width[id],
       SizeComponent.height[id]
     );
