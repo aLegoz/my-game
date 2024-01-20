@@ -7,12 +7,12 @@ export default function Home() {
   const ref = useRef<HTMLCanvasElement>(null);
   const [game] = useGame(ref);
 
-  const [position, setPosition] = useState({x: 0, y: 0});
-  const [velocity, setVelocity] = useState({x: 0, y: 0});
-  const [size, setSize] = useState({height: 1, width: 1})
+  const [position, setPosition] = useState({x: 250, y: 250});
+  const [velocity, setVelocity] = useState({x: 5, y: 5});
+  const [size, setSize] = useState({height: 20, width: 20})
   const [color, setColor] = useState(0);
 
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(10000);
 
   return (
     <main className={styles.main}>
