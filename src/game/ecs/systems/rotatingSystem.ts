@@ -1,3 +1,4 @@
+
 import { IWorld } from "bitecs";
 import { movementQuery } from "@/game/ecs/definedQueries";
 import { DirectionComponent } from "@/game/ecs/definedComponents";
@@ -9,7 +10,7 @@ export default function rotatingSystem(world: IWorld) {
     const {x, y} = rotateVector(
       DirectionComponent.x[id],
       DirectionComponent.y[id],
-      degreesToRadians(randomInt(-20, 20))
+      degreesToRadians(randomInt(-5, 5))
     );
     DirectionComponent.x[id] = x;
     DirectionComponent.y[id] = y;

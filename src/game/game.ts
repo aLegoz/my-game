@@ -1,3 +1,4 @@
+"use client";
 import {
   addComponent,
   addEntity,
@@ -13,9 +14,11 @@ import {
 } from "@/game/ecs/definedComponents";
 import boundarySystem from "@/game/ecs/systems/boundarySystem";
 import movementSystem from "@/game/ecs/systems/movementSystem";
-import renderSystem from "@/game/ecs/systems/renderSystem";
 import rotatingSystem from "@/game/ecs/systems/rotatingSystem";
-import { MS_PER_UPDATE } from "@/game/config";
+import { HEIGHT, MS_PER_UPDATE, WIDTH } from "@/game/config";
+import { Application, Assets } from "pixi.js";
+import pixieRenderSystem from "@/game/ecs/systems/pixieRenderSystem";
+
 
 export const IndexedColors = [
   "red",
@@ -26,7 +29,12 @@ export const IndexedColors = [
   "pink"
 ];
 
+if (typeof window !== "undefined") {
+  Assets.load('/textures/garbage_truck.png');
+}
+
 export default class Game {
+  private renderApplication;
   private isRunning = false;
   private delta = 0;
   private isAwaitedAnimationFrame = false;
@@ -34,21 +42,31 @@ export default class Game {
   private fixedPipeline;
   private renderPipeline;
 
-  constructor(context: CanvasRenderingContext2D) {
-    this.isRunning = false;
-    this.world = createWorld();
-    this.fixedPipeline = pipe(rotatingSystem, boundarySystem, movementSystem);
-    this.renderPipeline = pipe((world: IWorld) => renderSystem(context, world, this.delta));
-    this.initEntities(1000);
+  constructor(ref: HTMLDivElement) {
+      this.renderApplication = new Application();
+      if (typeof window !== "undefined") {
+        Assets.load('/textures/garbage_truck.png');
+      }
+      // @ts-ignore
+      ref.appendChild(this.renderApplication.view);
+      this.isRunning = false;
+      this.world = createWorld();
+      this.fixedPipeline = pipe(rotatingSystem, boundarySystem, movementSystem);
+      this.renderPipeline = pipe((world: IWorld) => pixieRenderSystem(this.renderApplication.stage, world, this.delta));
+    // (world: IWorld) => renderSystem(context, world, this.delta)
+  }
+
+  unmount() {
+    this.renderApplication.destroy(true);
   }
 
   initEntities(count: number) {
     for(let i = 0; i < count; i++) {
       this.initEntity(
-        {x: randomInt(0, 500), y: randomInt(0, 500)},
+        {x: randomInt(0, WIDTH), y: randomInt(0, HEIGHT)},
         randomInt(1, 5),
         {x: Math.random(), y: Math.random()},
-        {width: randomInt(5, 30), height: randomInt(5, 30)},
+        {width: 357, height: 124},
         randomInt(0, 6)
       );
     }
@@ -93,7 +111,6 @@ export default class Game {
   }
 
   start() {
-    console.log("Start");
     if (this.isRunning) {
       console.log("The game is already running");
       return;
@@ -103,11 +120,11 @@ export default class Game {
   }
 
   async gameLoop() {
-    console.log("GameLoop");
     let previous = performance.now();
+    let lag: number = 0;
+
     let current: number;
     let elapsed: number;
-    let lag: number = 0;
 
     while (this.isRunning) {
       current = performance.now();
@@ -125,12 +142,11 @@ export default class Game {
         requestAnimationFrame(() => this.renderTick());
       }
       this.delta = lag / MS_PER_UPDATE;
-      await new Promise(r => setTimeout(r, 0));
+      await new Promise(r => setTimeout(r, 0)); // Hack for not lock thread
     }
   }
 
   stop() {
-    console.log("Stop");
     if (!this.isRunning) {
       console.log("The game hasn't started yet");
       return;

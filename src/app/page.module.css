@@ -8,6 +8,10 @@
   min-height: 100vh;
 }
 
+.block {
+  border: gray 1px solid;
+}
+
 .new {
   border: dimgray 1px solid;
 }

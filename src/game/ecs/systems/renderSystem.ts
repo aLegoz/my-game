@@ -9,6 +9,7 @@ import {
 } from "@/game/ecs/definedComponents";
 import { lerp } from "@/app/utils";
 import { IndexedColors } from "@/game/game";
+import { HEIGHT, WIDTH } from "@/game/config";
 
 export default function renderSystem(
   drawContext: CanvasRenderingContext2D,
@@ -16,7 +17,7 @@ export default function renderSystem(
   delta: number
 ) {
   const entities = renderQuery(world);
-  drawContext.clearRect(0, 0, 500, 500);
+  drawContext.clearRect(0, 0, WIDTH, HEIGHT);
   for (const id of entities) {
     const deltaX = Math.round(SizeComponent.width[id] / 2);
     const deltaY = Math.round(SizeComponent.height[id] / 2);
