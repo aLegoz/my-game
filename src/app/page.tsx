@@ -8,7 +8,8 @@ export default function Home() {
   const [game] = useGame(ref);
 
   const [position, setPosition] = useState({x: 250, y: 250});
-  const [velocity, setVelocity] = useState({x: 5, y: 5});
+  const [direction, setDirection] = useState({x: 1, y: 1});
+  const [speed, setSpeed] = useState(1);
   const [size, setSize] = useState({height: 20, width: 20})
   const [color, setColor] = useState(0);
 
@@ -31,13 +32,20 @@ export default function Home() {
           <br/>
           <br/>
 
-          <label>Velocity:</label>
+          <label>MoveDirection:</label>
           <br/>
           <label>x: </label>
-          <input type="number" value={velocity.x} onChange={(test) => setVelocity({...velocity, x: Number(test.currentTarget.value)})}/>
+          <input type="number" value={direction.x} onChange={(test) => setDirection({...direction, x: Number(test.currentTarget.value)})}/>
           <br/>
           <label>y: </label>
-          <input type="number" value={velocity.y} onChange={(test) => setVelocity({...velocity, y: Number(test.currentTarget.value)})}/>
+          <input type="number" value={direction.y} onChange={(test) => setDirection({...direction, y: Number(test.currentTarget.value)})}/>
+          <br/>
+          <br/>
+
+          <label>Speed: </label>
+          <br/>
+          <label>value:</label>
+          <input type="number" min={0} value={color} onChange={(test) => setSpeed(Number(test.currentTarget.value))}/>
           <br/>
           <br/>
 
@@ -58,7 +66,8 @@ export default function Home() {
           <br/>
           <button onClick={() => game?.initEntity(
             position,
-            velocity,
+            speed,
+            direction,
             size,
             color
           )}>Create entity</button>

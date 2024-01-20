@@ -7,14 +7,14 @@ import {
 } from 'bitecs';
 import { randomInt } from "@/app/utils";
 import {
-  ColorComponent,
+  ColorComponent, DirectionComponent,
   PositionComponent,
-  SizeComponent,
-  VelocityComponent
+  SizeComponent, SpeedComponent,
 } from "@/game/ecs/definedComponents";
 import boundarySystem from "@/game/ecs/systems/boundarySystem";
 import movementSystem from "@/game/ecs/systems/movementSystem";
 import renderSystem from "@/game/ecs/systems/renderSystem";
+import rotatingSystem from "@/game/ecs/systems/rotatingSystem";
 
 export const IndexedColors = [
   "red",
@@ -36,7 +36,7 @@ export default class Game {
   constructor(context: CanvasRenderingContext2D) {
     this.isRunning = false;
     this.world = createWorld();
-    this.fixedPipeline = pipe(boundarySystem, movementSystem);
+    this.fixedPipeline = pipe(rotatingSystem, boundarySystem, movementSystem);
     this.renderPipeline = pipe((world: IWorld) => renderSystem(context, world, this.delta));
     this.initEntities(1000);
   }
@@ -45,7 +45,8 @@ export default class Game {
     for(let i = 0; i < count; i++) {
       this.initEntity(
         {x: randomInt(0, 500), y: randomInt(0, 500)},
-        {x: randomInt(-100, 100), y: randomInt(-100, 100)},
+        randomInt(1, 5),
+        {x: Math.random(), y: Math.random()},
         {width: randomInt(5, 30), height: randomInt(5, 30)},
         randomInt(0, 6)
       );
@@ -54,17 +55,20 @@ export default class Game {
 
   initEntity(
     position: {x: number, y: number},
-    velocity: {x: number, y: number},
+    speed: number,
+    direction: {x: number, y: number},
     size: {width: number, height: number},
     color: number
     ) {
     const id = addEntity(this.world);
     addComponent(this.world, PositionComponent, id);
-    addComponent(this.world, VelocityComponent, id);
     addComponent(this.world, ColorComponent, id);
     addComponent(this.world, SizeComponent, id);
-    VelocityComponent.x[id] = velocity.x;
-    VelocityComponent.y[id] = velocity.y;
+    addComponent(this.world, SpeedComponent, id);
+    addComponent(this.world, DirectionComponent, id);
+    SpeedComponent.current[id] = speed;
+    DirectionComponent.x[id] = direction.x;
+    DirectionComponent.y[id] = direction.y;
     PositionComponent.x[id] = position.x;
     PositionComponent.y[id] = position.y;
     SizeComponent.height[id] = size.height;
@@ -103,7 +107,8 @@ export default class Game {
     let current: number;
     let elapsed: number;
     let lag: number = 0;
-    const MS_PER_UPDATE = 50;
+    const FPS = 20;
+    const MS_PER_UPDATE = 1000 / FPS;
 
 
     while (this.isRunning) {

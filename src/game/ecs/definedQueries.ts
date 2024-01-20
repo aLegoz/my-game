@@ -1,18 +1,20 @@
 import { defineQuery } from "bitecs";
 import {
-  ColorComponent,
+  ColorComponent, DirectionComponent,
   PositionComponent,
   SizeComponent,
-  VelocityComponent
+  SpeedComponent,
 } from "@/game/ecs/definedComponents";
 
 export const movementQuery = defineQuery([
   PositionComponent,
-  VelocityComponent
+  SpeedComponent,
+  DirectionComponent
 ]);
 export const renderQuery = defineQuery([
   PositionComponent,
-  VelocityComponent,
+  SpeedComponent,
+  DirectionComponent,
   SizeComponent,
   ColorComponent
 ]);

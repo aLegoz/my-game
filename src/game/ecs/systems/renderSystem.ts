@@ -1,6 +1,12 @@
 import { IWorld } from "bitecs";
 import { renderQuery } from "@/game/ecs/definedQueries";
-import { ColorComponent, PositionComponent, SizeComponent, VelocityComponent } from "@/game/ecs/definedComponents";
+import {
+  ColorComponent,
+  DirectionComponent,
+  PositionComponent,
+  SizeComponent,
+  SpeedComponent
+} from "@/game/ecs/definedComponents";
 import { lerp } from "@/app/utils";
 import { IndexedColors } from "@/game/game";
 
@@ -19,8 +25,8 @@ export default function renderSystem(
 
     drawContext.fillStyle = IndexedColors[ColorComponent.colorIndex[id]];
     drawContext.fillRect(
-      lerp(posX, posX + VelocityComponent.x[id], delta),
-      lerp(posY, posY + VelocityComponent.y[id], delta),
+      lerp(posX, posX + (DirectionComponent.x[id] * SpeedComponent.current[id]), delta),
+      lerp(posY, posY + (DirectionComponent.y[id] * SpeedComponent.current[id]), delta),
       SizeComponent.width[id],
       SizeComponent.height[id]
     );
