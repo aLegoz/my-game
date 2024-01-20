@@ -9,7 +9,7 @@ export default function rotatingSystem(world: IWorld) {
     const {x, y} = rotateVector(
       DirectionComponent.x[id],
       DirectionComponent.y[id],
-      degreesToRadians(randomInt(-10, 10))
+      degreesToRadians(randomInt(-20, 20))
     );
     DirectionComponent.x[id] = x;
     DirectionComponent.y[id] = y;

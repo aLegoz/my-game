@@ -15,6 +15,7 @@ import boundarySystem from "@/game/ecs/systems/boundarySystem";
 import movementSystem from "@/game/ecs/systems/movementSystem";
 import renderSystem from "@/game/ecs/systems/renderSystem";
 import rotatingSystem from "@/game/ecs/systems/rotatingSystem";
+import { MS_PER_UPDATE } from "@/game/config";
 
 export const IndexedColors = [
   "red",
@@ -107,9 +108,6 @@ export default class Game {
     let current: number;
     let elapsed: number;
     let lag: number = 0;
-    const FPS = 20;
-    const MS_PER_UPDATE = 1000 / FPS;
-
 
     while (this.isRunning) {
       current = performance.now();

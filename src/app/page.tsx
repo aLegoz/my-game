@@ -2,6 +2,7 @@
 import styles from './page.module.css'
 import { RefObject, useEffect, useRef, useState } from "react";
 import Game, { IndexedColors } from "@/game/game";
+import { setUps, UPS } from "@/game/config";
 
 export default function Home() {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -12,6 +13,7 @@ export default function Home() {
   const [speed, setSpeed] = useState(1);
   const [size, setSize] = useState({height: 20, width: 20})
   const [color, setColor] = useState(0);
+  const [upsState, setUpsState] = useState(UPS);
 
   const [count, setCount] = useState(10000);
 
@@ -21,6 +23,16 @@ export default function Home() {
         <canvas ref={ref} width={500} height={500}></canvas>
       </div>
       <div>
+        <div>
+          <label>Update per seconds (fixed):</label>
+          <input type="number" value={upsState} min={1} max={60} onChange={(e) => {
+            let value = Number(e.currentTarget.value);
+            setUps(value);
+            setUpsState(value);
+          }
+          }/>
+        </div>
+
         <div className={styles.new}>
           <label>Position:</label>
           <br/>
@@ -45,7 +57,7 @@ export default function Home() {
           <label>Speed: </label>
           <br/>
           <label>value:</label>
-          <input type="number" min={0} value={color} onChange={(test) => setSpeed(Number(test.currentTarget.value))}/>
+          <input type="number" min={0} value={speed} onChange={(test) => setSpeed(Number(test.currentTarget.value))}/>
           <br/>
           <br/>
 
