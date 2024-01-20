@@ -73,7 +73,6 @@ export default function Home() {
         <button onClick={() => game?.start()}>Start</button>
         <button onClick={() => game?.stop()}>Stop</button>
         <button onClick={() => game?.removeAllEntity()}>RemoveEntities</button>
-        <button onClick={() => game?.initEntities(1000)}>InitEntities</button>
       </div>
     </main>
   )
