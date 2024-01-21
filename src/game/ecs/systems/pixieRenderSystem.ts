@@ -15,7 +15,7 @@ import { showFps } from "@/game/config";
 
 const testMap = new Map<number, Sprite>;
 const ttestMap = new Map<number, Emitter>;
-let text: Container | null;
+let text: Text | null;
 let container: Container;
 
 export default function pixieRenderSystem(
@@ -27,17 +27,22 @@ export default function pixieRenderSystem(
 ) {
   const entities = renderQuery(world);
   for (const id of entities) {
-    if (text) {
-      text.destroy(true);
-      text = null;
-    }
     if (showFps) {
-      text = new Text(`fps: ${fps} \nups: ${ups}`);
-      text.x = 0;
-      text.y = 0;
-      text.scale.x = 0.5;
-      text.scale.y = 0.5;
+      let line = `fps: ${fps} \nups: ${ups}`;
+      if (!text) {
+        text = new Text(line);
+        text.x = 0;
+        text.y = 0;
+        text.scale.x = 0.5;
+        text.scale.y = 0.5;
+      }
+      text.text = line
       stage.addChild(text);
+    } else {
+      if (text) {
+        text.destroy();
+        text = null;
+      }
     }
 
     let sprite;
