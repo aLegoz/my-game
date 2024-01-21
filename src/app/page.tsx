@@ -1,7 +1,7 @@
 'use client';
 import styles from './page.module.css'
 import { useRef, useState } from "react";
-import { debug, setDebug, setUps, UPS } from "@/game/config";
+import { debug, setDebug, setFps, setUps, showFps, UPS } from "@/game/config";
 import useGame from "@/game/useGame";
 
 export default function Home() {
@@ -14,6 +14,7 @@ export default function Home() {
   const [ratio, setRatio] = useState(30);
   const [upsState, setUpsState] = useState(UPS);
   const [debugFlag, setDebugFlag] = useState(debug);
+  const [fpsFlag, setFpsFlag] = useState(showFps);
 
   const [count, setCount] = useState(500);
 
@@ -26,6 +27,12 @@ export default function Home() {
           <label>Debug mode</label>
           <input type="checkbox" checked={debugFlag} onChange={() => {
             setDebugFlag(setDebug());
+          }}/>
+        </div>
+        <div className={styles.block}>
+          <label>Show FPS/UPS</label>
+          <input type="checkbox" checked={fpsFlag} onChange={() => {
+            setFpsFlag(setFps());
           }}/>
         </div>
         <div className={styles.block}>

@@ -8,21 +8,37 @@ import {
   SpeedComponent
 } from "@/game/ecs/definedComponents";
 import { lerp, lerpRadian, rotatePoint } from "@/app/utils";
-import { Assets, Container, DisplayObject, Sprite } from "pixi.js";
+import { Assets, Container, DisplayObject, Sprite, Text } from "pixi.js";
 import { Emitter, upgradeConfig } from "@pixi/particle-emitter";
 import emitterConfig from "../../../../public/emitter.json";
+import { showFps } from "@/game/config";
 
 const testMap = new Map<number, Sprite>;
 const ttestMap = new Map<number, Emitter>;
+let text: Container | null;
 let container: Container;
 
 export default function pixieRenderSystem(
   stage: Container<DisplayObject>,
   world: IWorld,
   delta: number,
+  fps: number,
+  ups: number
 ) {
   const entities = renderQuery(world);
   for (const id of entities) {
+    if (text) {
+      text.destroy(true);
+      text = null;
+    }
+    if (showFps) {
+      text = new Text(`fps: ${fps} \nups: ${ups}`);
+      text.x = 0;
+      text.y = 0;
+      text.scale.x = 0.5;
+      text.scale.y = 0.5;
+      stage.addChild(text);
+    }
 
     let sprite;
     if (!testMap.has(id)) {
@@ -30,6 +46,7 @@ export default function pixieRenderSystem(
       sprite.width = SizeComponent.width[id] * SizeComponent.ratio[id];
       sprite.height = SizeComponent.height[id] * SizeComponent.ratio[id];
       sprite.anchor.set(0.5, 0.5);
+      sprite.cacheAsBitmap = true;
       testMap.set(id, sprite);
       stage.addChild(sprite);
     }
@@ -51,8 +68,8 @@ export default function pixieRenderSystem(
     if (!emitter) continue;
 
     const { x, y } = rotatePoint(
-      sprite.x - (sprite.width / 2),
-      sprite.y - (sprite.height / 2),
+      sprite.x - (sprite.width / 2) / 2,
+      sprite.y - (sprite.height / 2) / 2,
       sprite.x,
       sprite.y,
       sprite.rotation

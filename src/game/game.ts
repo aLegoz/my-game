@@ -30,6 +30,8 @@ export default class Game {
   private world: IWorld;
   private fixedPipeline;
   private renderPipeline;
+  private fps = 0;
+  private ups = 0;
 
   constructor(ref: HTMLDivElement) {
       this.renderApplication = new Application<HTMLCanvasElement>();
@@ -47,7 +49,7 @@ export default class Game {
         movementSystem
       );
       this.renderPipeline = pipe(
-        (world: IWorld) => pixieRenderSystem(this.renderApplication.stage, world, this.delta),
+        (world: IWorld) => pixieRenderSystem(this.renderApplication.stage, world, this.delta, this.fps, this.ups),
         (world: IWorld) => debugRenderFramePixiSystem(this.renderApplication.stage, world),
         (world: IWorld) => debugRenderDirectionPixiSystem(this.renderApplication.stage, world)
       );
@@ -120,6 +122,9 @@ export default class Game {
   async gameLoop() {
     let previous = performance.now();
     let lag: number = 0;
+    let renderFrameCount = 0;
+    let fixedFrameCount = 0;
+    let fpsTimer = performance.now();
 
     let current: number;
     let elapsed: number;
@@ -132,11 +137,21 @@ export default class Game {
 
       while (lag >= MS_PER_UPDATE) {
         this.fixedTick();
+        fixedFrameCount += 1;
         lag -= MS_PER_UPDATE;
       }
 
       this.delta = lag / MS_PER_UPDATE;
       this.renderTick();
+      renderFrameCount += 1;
+
+      if ((performance.now() - fpsTimer) > 1000) {
+        fpsTimer += 1000;
+        this.ups = fixedFrameCount;
+        this.fps = renderFrameCount;
+        renderFrameCount = 0;
+        fixedFrameCount = 0;
+      }
 
       await new Promise(r => setTimeout(r, 0)); // Hack for not lock thread
     }
