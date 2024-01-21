@@ -6,6 +6,5 @@ import { Speed } from "@/game/ecs/components/Speed";
 
 export const PositionComponent = defineComponent(Vector2);
 export const SizeComponent = defineComponent(Size);
-
 export const SpeedComponent = defineComponent(Speed);
 export const DirectionComponent = defineComponent(Vector2);

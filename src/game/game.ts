@@ -19,6 +19,8 @@ import rotatingSystem from "@/game/ecs/systems/rotatingSystem";
 import { MS_PER_UPDATE } from "@/game/config";
 import { Application, Assets } from "pixi.js";
 import pixieRenderSystem from "@/game/ecs/systems/pixieRenderSystem";
+import debugRenderFramePixiSystem from "@/game/ecs/systems/debugRenderFramePixiSystem";
+import debugRenderDirectionPixiSystem from "@/game/ecs/systems/debugRenderDirectionPixiSystem";
 
 export default class Game {
   private renderApplication;
@@ -44,7 +46,9 @@ export default class Game {
         movementSystem
       );
       this.renderPipeline = pipe(
-        (world: IWorld) => pixieRenderSystem(this.renderApplication.stage, world, this.delta)
+        (world: IWorld) => pixieRenderSystem(this.renderApplication.stage, world, this.delta),
+        (world: IWorld) => debugRenderFramePixiSystem(this.renderApplication.stage, world),
+        (world: IWorld) => debugRenderDirectionPixiSystem(this.renderApplication.stage, world)
       );
   }
 
@@ -130,11 +134,9 @@ export default class Game {
         lag -= MS_PER_UPDATE;
       }
 
-      if (!this.isAwaitedAnimationFrame) {
-        this.isAwaitedAnimationFrame = true;
-        requestAnimationFrame(() => this.renderTick());
-      }
       this.delta = lag / MS_PER_UPDATE;
+      this.renderTick();
+
       await new Promise(r => setTimeout(r, 0)); // Hack for not lock thread
     }
   }

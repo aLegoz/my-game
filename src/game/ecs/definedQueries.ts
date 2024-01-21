@@ -18,3 +18,14 @@ export const renderQuery = defineQuery([
   DirectionComponent,
   SizeComponent,
 ]);
+
+export const debugRenderFrameQuery = defineQuery([
+  PositionComponent,
+  SizeComponent,
+  DirectionComponent
+]);
+
+export const debugRenderDirectionQuery = defineQuery([
+  DirectionComponent,
+  PositionComponent,
+]);

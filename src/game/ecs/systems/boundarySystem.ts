@@ -5,6 +5,7 @@ import { DirectionComponent, PositionComponent } from "@/game/ecs/definedCompone
 export default function boundarySystem(world: IWorld, boundary: {width: number, height: number}) {
   const entities = movementQuery(world);
   for (const id of entities) {
+
     if (PositionComponent.x[id] < 0) {
       if (DirectionComponent.x[id] < 0) {
         DirectionComponent.x[id] *= -1;

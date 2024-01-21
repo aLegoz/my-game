@@ -8,11 +8,9 @@ import {
   SpeedComponent
 } from "@/game/ecs/definedComponents";
 import { lerp } from "@/app/utils";
-import { Assets, Container, DisplayObject, Graphics, Sprite } from "pixi.js";
-import { debug } from "@/game/config";
+import { Assets, Container, DisplayObject, Sprite } from "pixi.js";
 
-export const testMap = new Map<number, Sprite>;
-export const debugMap = new Map<number, Graphics>;
+const testMap = new Map<number, Sprite>;
 export default function pixieRenderSystem(
   stage: Container<DisplayObject>,
   world: IWorld,
@@ -38,35 +36,6 @@ export default function pixieRenderSystem(
     sprite.x = lerp(posX, posX + (DirectionComponent.x[id] * SpeedComponent.current[id]), delta);
     sprite.y = lerp(posY, posY + (DirectionComponent.y[id] * SpeedComponent.current[id]), delta);
     sprite.rotation = lerp(sprite.rotation, Math.atan2(DirectionComponent.y[id], DirectionComponent.x[id]), delta);
-    if (debug) {
-      let graphic;
-      if (!debugMap.has(id)) {
-        graphic = new Graphics();
-        graphic.lineStyle(2, "green", 1);
-        graphic.moveTo(0, 0);
-        graphic.lineTo(SizeComponent.width[id] * SizeComponent.ratio[id], 0);
-        graphic.lineTo(SizeComponent.width[id] * SizeComponent.ratio[id], SizeComponent.height[id] * SizeComponent.ratio[id]);
-        graphic.lineTo(0, SizeComponent.height[id] * SizeComponent.ratio[id]);
-        graphic.lineTo(0, 0);
-        graphic.pivot.x = (SizeComponent.width[id] * SizeComponent.ratio[id]) / 2;
-        graphic.pivot.y = (SizeComponent.height[id] * SizeComponent.ratio[id]) / 2;
-        debugMap.set(id, graphic);
-        stage.addChild(graphic);
-      }
-      graphic = graphic ?? debugMap.get(id);
-      if (!graphic) continue;
-
-      graphic.x = posX;
-      graphic.y = posY;
-      graphic.rotation = Math.atan2(DirectionComponent.y[id], DirectionComponent.x[id]);
-    } else {
-      if (debugMap.size > 0) {
-        for (const [,value] of debugMap) {
-          value.destroy();
-        }
-        debugMap.clear()
-      }
-    }
   }
   return world;
 }
