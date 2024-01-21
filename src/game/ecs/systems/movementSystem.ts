@@ -1,3 +1,4 @@
+"use client";
 import { IWorld } from "bitecs";
 import { movementQuery } from "@/game/ecs/definedQueries";
 import { DirectionComponent, PositionComponent, SpeedComponent } from "@/game/ecs/definedComponents";

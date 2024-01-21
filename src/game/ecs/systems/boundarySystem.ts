@@ -1,9 +1,8 @@
 import { IWorld } from "bitecs";
 import { movementQuery } from "@/game/ecs/definedQueries";
 import { DirectionComponent, PositionComponent } from "@/game/ecs/definedComponents";
-import { HEIGHT, WIDTH } from "@/game/config";
 
-export default function boundarySystem(world: IWorld) {
+export default function boundarySystem(world: IWorld, boundary: {width: number, height: number}) {
   const entities = movementQuery(world);
   for (const id of entities) {
     if (PositionComponent.x[id] < 0) {
@@ -12,7 +11,7 @@ export default function boundarySystem(world: IWorld) {
       }
     }
 
-    if (PositionComponent.x[id] > WIDTH) {
+    if (PositionComponent.x[id] > boundary.width) {
       if (DirectionComponent.x[id] > 0) {
         DirectionComponent.x[id] *= -1;
       }
@@ -24,7 +23,7 @@ export default function boundarySystem(world: IWorld) {
       }
     }
 
-    if (PositionComponent.y[id] > HEIGHT) {
+    if (PositionComponent.y[id] > boundary.height) {
       if (DirectionComponent.y[id] > 0) {
         DirectionComponent.y[id] *= -1;
       }

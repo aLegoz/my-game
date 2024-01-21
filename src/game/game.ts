@@ -8,30 +8,17 @@ import {
 } from 'bitecs';
 import { randomInt } from "@/app/utils";
 import {
-  ColorComponent, DirectionComponent,
+  DirectionComponent,
   PositionComponent,
-  SizeComponent, SpeedComponent,
+  SizeComponent,
+  SpeedComponent,
 } from "@/game/ecs/definedComponents";
 import boundarySystem from "@/game/ecs/systems/boundarySystem";
 import movementSystem from "@/game/ecs/systems/movementSystem";
 import rotatingSystem from "@/game/ecs/systems/rotatingSystem";
-import { HEIGHT, MS_PER_UPDATE, WIDTH } from "@/game/config";
+import { MS_PER_UPDATE } from "@/game/config";
 import { Application, Assets } from "pixi.js";
 import pixieRenderSystem from "@/game/ecs/systems/pixieRenderSystem";
-
-
-export const IndexedColors = [
-  "red",
-  "green",
-  "blue",
-  "purple",
-  "white",
-  "pink"
-];
-
-if (typeof window !== "undefined") {
-  Assets.load('/textures/garbage_truck.png');
-}
 
 export default class Game {
   private renderApplication;
@@ -43,17 +30,26 @@ export default class Game {
   private renderPipeline;
 
   constructor(ref: HTMLDivElement) {
-      this.renderApplication = new Application();
-      if (typeof window !== "undefined") {
-        Assets.load('/textures/garbage_truck.png');
-      }
-      // @ts-ignore
+      this.renderApplication = new Application<HTMLCanvasElement>();
+      Assets.load([
+        '/textures/garbage_truck.png',
+        '/textures/garbage_container.png'
+      ]);
       ref.appendChild(this.renderApplication.view);
       this.isRunning = false;
       this.world = createWorld();
-      this.fixedPipeline = pipe(rotatingSystem, boundarySystem, movementSystem);
-      this.renderPipeline = pipe((world: IWorld) => pixieRenderSystem(this.renderApplication.stage, world, this.delta));
-    // (world: IWorld) => renderSystem(context, world, this.delta)
+      this.fixedPipeline = pipe(
+        rotatingSystem,
+        (world: IWorld) => boundarySystem(world, this.getScreenSize()),
+        movementSystem
+      );
+      this.renderPipeline = pipe(
+        (world: IWorld) => pixieRenderSystem(this.renderApplication.stage, world, this.delta)
+      );
+  }
+
+  getScreenSize() {
+    return { width: this.renderApplication.screen.width, height: this.renderApplication.screen.height};
   }
 
   unmount() {
@@ -63,11 +59,10 @@ export default class Game {
   initEntities(count: number) {
     for(let i = 0; i < count; i++) {
       this.initEntity(
-        {x: randomInt(0, WIDTH), y: randomInt(0, HEIGHT)},
-        randomInt(1, 5),
+        {x: randomInt(0, this.renderApplication.screen.width), y: randomInt(0, this.renderApplication.screen.height)},
+        randomInt(5, 10),
         {x: Math.random(), y: Math.random()},
-        {width: 357, height: 124},
-        randomInt(0, 6)
+        {width: 357, height: 124, ratio: 0.33},
       );
     }
   }
@@ -76,12 +71,10 @@ export default class Game {
     position: {x: number, y: number},
     speed: number,
     direction: {x: number, y: number},
-    size: {width: number, height: number},
-    color: number
+    size: { width: number, height: number, ratio: number },
     ) {
     const id = addEntity(this.world);
     addComponent(this.world, PositionComponent, id);
-    addComponent(this.world, ColorComponent, id);
     addComponent(this.world, SizeComponent, id);
     addComponent(this.world, SpeedComponent, id);
     addComponent(this.world, DirectionComponent, id);
@@ -92,7 +85,7 @@ export default class Game {
     PositionComponent.y[id] = position.y;
     SizeComponent.height[id] = size.height;
     SizeComponent.width[id] = size.width;
-    ColorComponent.colorIndex[id] = color;
+    SizeComponent.ratio[id] = size.ratio;
   }
 
   removeAllEntity() {

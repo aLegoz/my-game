@@ -1,6 +1,7 @@
+"use client";
 import { defineQuery } from "bitecs";
 import {
-  ColorComponent, DirectionComponent,
+  DirectionComponent,
   PositionComponent,
   SizeComponent,
   SpeedComponent,
@@ -16,5 +17,4 @@ export const renderQuery = defineQuery([
   SpeedComponent,
   DirectionComponent,
   SizeComponent,
-  ColorComponent
 ]);

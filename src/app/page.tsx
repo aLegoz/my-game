@@ -1,8 +1,8 @@
 'use client';
 import styles from './page.module.css'
 import { useRef, useState } from "react";
-import { setUps, UPS } from "@/game/config";
-import useGame from "@/app/useGame";
+import { debug, setDebug, setUps, UPS } from "@/game/config";
+import useGame from "@/game/useGame";
 
 export default function Home() {
   const ref = useRef<HTMLDivElement>(null);
@@ -11,19 +11,23 @@ export default function Home() {
   const [position, setPosition] = useState({x: 250, y: 250});
   const [direction, setDirection] = useState({x: 1, y: 1});
   const [speed, setSpeed] = useState(5);
-  const [size, setSize] = useState({height: 124, width: 357})
-  const [color, setColor] = useState(0);
+  const [ratio, setRatio] = useState(30);
   const [upsState, setUpsState] = useState(UPS);
+  const [debugFlag, setDebugFlag] = useState(debug);
 
-  const [count, setCount] = useState(10000);
+  const [count, setCount] = useState(500);
 
   return (
     <main className={styles.main}>
 
-      <div ref={ref}>
-        {/*<canvas className={styles.block} ref={ref} width={WIDTH} height={HEIGHT}></canvas>*/}
-      </div>
+      <div ref={ref}></div>
       <div>
+        <div className={styles.block}>
+          <label>Debug mode</label>
+          <input type="checkbox" checked={debugFlag} onChange={() => {
+            setDebugFlag(setDebug());
+          }}/>
+        </div>
         <div className={styles.block}>
           <label>Update per seconds (fixed):</label>
           <input type="number" value={upsState} min={1} max={60} onChange={(e) => {
@@ -56,33 +60,20 @@ export default function Home() {
           <br/>
 
           <label>Speed: </label>
-          <br/>
-          <label>value:</label>
           <input type="number" min={0} value={speed} onChange={(test) => setSpeed(Number(test.currentTarget.value))}/>
           <br/>
           <br/>
 
-          <label>Size:</label>
-          <br/>
-          <label>h: </label>
-          <input type="number" value={size.height} onChange={(test) => setSize({...size, height: Number(test.currentTarget.value)})}/>
-          <br/>
-          <label>w: </label>
-          <input type="number" value={size.width} onChange={(test) => setSize({...size, width: Number(test.currentTarget.value)})}/>
+          <label>Size %:</label>
+          <input type="number" value={ratio} onChange={(test) => setRatio(Number(test.currentTarget.value))}/>
           <br/>
           <br/>
 
-          {/*<label>Color: </label>
-          <br/>
-          <label>i:</label>
-          <input type="number" min={0} max={IndexedColors.length - 1}  value={color} onChange={(test) => setColor(Number(test.currentTarget.value))}/>
-          <br/>*/}
           <button onClick={() => game?.initEntity(
             position,
             speed,
             direction,
-            size,
-            color
+            { width: 357, height: 124, ratio: ratio / 100 },
           )}>Create entity</button>
         </div>
         <br/>
