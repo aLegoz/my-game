@@ -4,7 +4,8 @@ import {
   addEntity,
   createWorld, getAllEntities,
   IWorld,
-  pipe, removeEntity,
+  pipe,
+  removeEntity,
 } from 'bitecs';
 import { randomInt } from "@/app/utils";
 import {

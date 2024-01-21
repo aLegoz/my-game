@@ -26,25 +26,9 @@ export default function pixieRenderSystem(
   ups: number
 ) {
   const entities = renderQuery(world);
+  let entityCounter = 0;
   for (const id of entities) {
-    if (showFps) {
-      let line = `fps: ${fps} \nups: ${ups}`;
-      if (!text) {
-        text = new Text(line);
-        text.x = 0;
-        text.y = 0;
-        text.scale.x = 0.5;
-        text.scale.y = 0.5;
-      }
-      text.text = line
-      stage.addChild(text);
-    } else {
-      if (text) {
-        text.destroy();
-        text = null;
-      }
-    }
-
+    entityCounter += 1;
     let sprite;
     if (!testMap.has(id)) {
       sprite = new Sprite(Assets.get("/textures/garbage_truck.png"));
@@ -81,9 +65,7 @@ export default function pixieRenderSystem(
     )
 
     emitter.updateOwnerPos(x, y);
-    //emitter.rotate(sprite.angle);
     emitter.update(delta / 250);
-
 
 
     const posX = PositionComponent.x[id];
@@ -94,5 +76,24 @@ export default function pixieRenderSystem(
 
     sprite.rotation = lerpRadian(sprite.rotation, Math.atan2(DirectionComponent.y[id], DirectionComponent.x[id]), delta);
   }
+
+  if (showFps) {
+    let line = `fps: ${fps} \nups: ${ups}\nentity: ${entityCounter}`;
+    if (!text) {
+      text = new Text(line);
+      text.x = 0;
+      text.y = 0;
+      text.scale.x = 0.5;
+      text.scale.y = 0.5;
+    }
+    text.text = line
+    stage.addChild(text);
+  } else {
+    if (text) {
+      text.destroy();
+      text = null;
+    }
+  }
+
   return world;
 }

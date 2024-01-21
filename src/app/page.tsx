@@ -7,7 +7,6 @@ import useGame from "@/game/useGame";
 export default function Home() {
   const ref = useRef<HTMLDivElement>(null);
   const [game] = useGame(ref);
-
   const [position, setPosition] = useState({x: 250, y: 250});
   const [direction, setDirection] = useState({x: 1, y: 1});
   const [speed, setSpeed] = useState(5);
@@ -93,7 +92,6 @@ export default function Home() {
         <div className={styles.block}>
           <button onClick={() => game?.start()}>Start</button>
           <button onClick={() => game?.stop()}>Stop</button>
-          <button onClick={() => game?.removeAllEntity()}>RemoveEntities</button>
         </div>
       </div>
     </main>
