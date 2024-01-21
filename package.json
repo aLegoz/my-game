@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@pixi/particle-emitter": "^5.0.8",
     "bitecs": "^0.3.40",
     "next": "14.0.4",
     "pixi.js": "^7.3.3",

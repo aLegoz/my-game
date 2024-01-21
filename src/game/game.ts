@@ -33,6 +33,7 @@ export default class Game {
 
   constructor(ref: HTMLDivElement) {
       this.renderApplication = new Application<HTMLCanvasElement>();
+      this.renderApplication.renderer.background.color = "darkgray";
       Assets.load([
         '/textures/garbage_truck.png',
         '/textures/garbage_container.png'
